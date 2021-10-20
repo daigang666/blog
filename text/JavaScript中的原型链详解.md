@@ -55,6 +55,8 @@ console.log(Person.prototype.constructor === Person);
 ```
 到这里我们就得到了，构造函数，实例对象和实例原型的关系，画出如下关系图：
 
+![image.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c7c16d51e7c64684ac1c81e91e643f15~tplv-k3u1fbpfcp-watermark.image?)
+
 # 实例与原型
 当我们去访问实例的属性时，如果当前实例本身不存在该属性，就会去与之关联的对象也就是它的原型去找，如果还找不到，就会去找原型的原型，找到终点为止。我们来继续改造一下之前的示例
 ```JavaScript
@@ -79,6 +81,8 @@ var obj = new Object();
 console.log(obj);
 ```
 通过前面我们知道`obj.__proto__`指向`Object.prototype`,则我们可以继续更新关系图。
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/28280d77034b4b62bb232dfd360c0024~tplv-k3u1fbpfcp-watermark.image?)
 # 原型链
 那么`Object.prototype`的原型是什么呢？
 ```javaScript

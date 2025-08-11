@@ -15,6 +15,8 @@ export const extractURLParams = (urlString: string): Record<string, string> => {
 
 export const objectToQueryString = (params: Record<string, any>): string => {
   const queryParams = createSearchParams(params);
+  console.log("params", param)
+  debugger
   return queryParams.toString();
 };
 

@@ -236,3 +236,48 @@ export const getIsDingTalk = () => {
   const userAgent = navigator.userAgent.toLowerCase();
   return /dingtalk/i.test(userAgent);
 };
+/**
+ * 组织树节点接口
+ */
+export interface TreeNode {
+  key: string;
+  title: string;
+  children?: TreeNode[];
+  parent?: string;
+  [key: string]: any;
+}
+
+/**
+ * 查找从根节点到目标节点的路径
+ * @param tree 组织树数据
+ * @param targetId 目标节点ID
+ * @param path 当前路径，用于递归
+ * @returns 从根节点到目标节点的路径数组
+ */
+export const findOrgPath = (
+  tree: TreeNode[] | TreeNode,
+  targetId: string,
+  path: string[] = ['_root'],
+): string[] => {
+  if (!tree) return [];
+
+  // 如果传入的是单个节点，转换为数组
+  const nodes = Array.isArray(tree) ? tree : [tree];
+
+  for (const node of nodes) {
+    // 找到目标节点
+    if (node.key === targetId) {
+      return path;
+    }
+
+    // 递归搜索子节点
+    if (node.children && node.children.length > 0) {
+      const childPath = findOrgPath(node.children, targetId, [...path, node.key]);
+      if (childPath.length > 0) {
+        return childPath;
+      }
+    }
+  }
+
+  return [];
+};

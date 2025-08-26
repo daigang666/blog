@@ -282,3 +282,51 @@ export const findOrgPath = (
 
   return [];
 };
+/**
+ * 查找节点在树中的完整信息
+ * @param tree 组织树数据
+ * @param targetId 目标节点ID
+ * @returns 节点信息，如果未找到返回null
+ */
+export const findNodeById = (tree: TreeNode[] | TreeNode, targetId: string): TreeNode | null => {
+  if (!tree) return null;
+
+  const nodes = Array.isArray(tree) ? tree : [tree];
+
+  for (const node of nodes) {
+    if (node.key === targetId) {
+      return node;
+    }
+
+    if (node.children && node.children.length > 0) {
+      const found = findNodeById(node.children, targetId);
+      if (found) {
+        return found;
+      }
+    }
+  }
+
+  return null;
+};
+
+/**
+ * 获取所有父级节点的ID列表
+ * @param tree 组织树数据
+ * @param targetId 目标节点ID
+ * @returns 所有父级节点ID数组（不包含目标节点本身）
+ */
+export const getParentNodeIds = (tree: TreeNode[] | TreeNode, targetId: string): string[] => {
+  const path = findOrgPath(tree, targetId);
+  // 移除最后一个元素（目标节点本身）
+  return path.slice(0, -1);
+};
+
+/**
+ * 检查节点是否存在于树中
+ * @param tree 组织树数据
+ * @param targetId 目标节点ID
+ * @returns 是否存在
+ */
+export const nodeExists = (tree: TreeNode[] | TreeNode, targetId: string): boolean => {
+  return findNodeById(tree, targetId) !== null;
+};

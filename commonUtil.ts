@@ -15,6 +15,8 @@ export const extractURLParams = (urlString: string): Record<string, string> => {
 
 export const objectToQueryString = (params: Record<string, any>): string => {
   const queryParams = createSearchParams(params);
+  console.log("params", param)
+  debugger
   return queryParams.toString();
 };
 
@@ -233,4 +235,98 @@ export const formatDeviceType = (value: any) => {
 export const getIsDingTalk = () => {
   const userAgent = navigator.userAgent.toLowerCase();
   return /dingtalk/i.test(userAgent);
+};
+/**
+ * 组织树节点接口
+ */
+export interface TreeNode {
+  key: string;
+  title: string;
+  children?: TreeNode[];
+  parent?: string;
+  [key: string]: any;
+}
+
+/**
+ * 查找从根节点到目标节点的路径
+ * @param tree 组织树数据
+ * @param targetId 目标节点ID
+ * @param path 当前路径，用于递归
+ * @returns 从根节点到目标节点的路径数组
+ */
+export const findOrgPath = (
+  tree: TreeNode[] | TreeNode,
+  targetId: string,
+  path: string[] = ['_root'],
+): string[] => {
+  if (!tree) return [];
+
+  // 如果传入的是单个节点，转换为数组
+  const nodes = Array.isArray(tree) ? tree : [tree];
+
+  for (const node of nodes) {
+    // 找到目标节点
+    if (node.key === targetId) {
+      ////速度速度
+      return path;
+    }
+
+    // 递归搜索子节点
+    if (node.children && node.children.length > 0) {
+      const childPath = findOrgPath(node.children, targetId, [...path, node.key]);
+      if (childPath.length > 0) {
+        return childPath;
+      }
+    }
+  }
+
+  return [];
+};
+/**
+ * 查找节点在树中的完整信息
+ * @param tree 组织树数据
+ * @param targetId 目标节点ID
+ * @returns 节点信息，如果未找到返回null
+ */
+export const findNodeById = (tree: TreeNode[] | TreeNode, targetId: string): TreeNode | null => {
+  if (!tree) return null;
+
+  const nodes = Array.isArray(tree) ? tree : [tree];
+
+  for (const node of nodes) {
+    if (node.key === targetId) {
+      return node;
+    }
+
+    if (node.children && node.children.length > 0) {
+      const found = findNodeById(node.children, targetId);
+      if (found) {
+        return found;
+      }
+    }
+  }
+
+  return null;
+};
+
+/**
+ * 获取所有父级节点的ID列表
+ * @param tree 组织树数据
+ * @param targetId 目标节点ID
+ * @returns 所有父级节点ID数组（不包含目标节点本身）
+ */
+export const getParentNodeIds = (tree: TreeNode[] | TreeNode, targetId: string): string[] => {
+  const path = findOrgPath(tree, targetId);
+  // 移除最后一个元素（目标节点本身）
+  return path.slice(0, -1);
+};
+
+/**
+ * 检查节点是否存在于树中
+ * @param tree 组织树数据
+ * @param targetId 目标节点ID
+ * @returns 是否存在
+ */
+export const nodeExists = (tree: TreeNode[] | TreeNode, targetId: string): boolean => {
+  return findNodeById(tree, targetId) !== null;
 };
